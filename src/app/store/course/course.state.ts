@@ -1,5 +1,5 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
-import * as _ from 'lodash';
+import { chain, orderBy, reduce } from 'lodash';
 
 import { coursesActions } from './course.actions';
 import { Course, CourseData } from '@models/course';
@@ -58,7 +58,9 @@ const reducer = createReducer(
   })),
   on(coursesActions.saveCourseSuccess, (state, { course }) => ({
     ...state,
-    courses: state.courses.map((item) => (course.id === item.id ? course : item)),
+    courses: state.courses.map((item) =>
+      course.id === item.id ? course : item
+    ),
     error: '',
   })),
   on(coursesActions.getTotalCoursesFailure, (state, { error }) => ({
@@ -76,12 +78,12 @@ const reducer = createReducer(
 );
 
 function getByPathValue(courses: Course[]): CourseData[] {
-  let byPath = _.chain(courses)
+  let byPath = chain(courses)
     .groupBy('path')
     .map((values, key) => {
       return {
         name: key,
-        value: _.reduce(
+        value: reduce(
           values,
           function (value, number) {
             return value + 1;
@@ -91,17 +93,17 @@ function getByPathValue(courses: Course[]): CourseData[] {
       };
     })
     .value();
-  byPath = _.orderBy(byPath, 'value', 'desc');
+  byPath = orderBy(byPath, 'value', 'desc');
   return byPath;
 }
 
 function getBySourceValue(course: Course[]): CourseData[] {
-  let bySource = _.chain(course)
+  let bySource = chain(course)
     .groupBy('source')
     .map((values, key) => {
       return {
         name: key,
-        value: _.reduce(
+        value: reduce(
           values,
           function (value, number) {
             return value + 1;
@@ -111,7 +113,7 @@ function getBySourceValue(course: Course[]): CourseData[] {
       };
     })
     .value();
-  bySource = _.orderBy(bySource, 'value', 'desc');
+  bySource = orderBy(bySource, 'value', 'desc');
   return bySource;
 }
 
