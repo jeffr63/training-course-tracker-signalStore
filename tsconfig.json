@@ -1,0 +1,48 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "module": "es2020",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "paths": {
+      "@modals/*": [
+        "./src/app/shared/modals/*"
+      ],
+      "@models/*": [
+        "./src/app/shared/models/*"
+      ],
+      "@resolvers/*": [
+        "./src/app/shared/resolvers/*"
+      ],
+      "@shared/*": [
+        "./src/app/shared/*"
+      ],
+      "@services/*": [
+        "./src/app/shared/services/*"
+      ],
+      "@store/*": [
+        "./src/app/store/*"
+      ],
+      "@testing/*": [
+        "./src/testing/*"
+      ],
+    },
+    "useDefineForClassFields": false
+  },
+    "angularCompilerOptions": {
+      "strictTemplates": true,
+    }
+}
