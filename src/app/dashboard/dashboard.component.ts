@@ -1,13 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { Store, select } from '@ngrx/store';
 
-import * as fromRoot from '@store/index';
-import { coursesActions } from '@store/course/course.actions';
-import { coursesFeature } from '@store/course/course.state';
 import { CoursesStore } from '@store/course/course.store';
 
 @Component({
@@ -27,8 +22,7 @@ import { CoursesStore } from '@store/course/course.store';
                 [results]="courses()"
                 [labels]="true"
                 [doughnut]="true"
-                [arcWidth]="0.5"
-              >
+                [arcWidth]="0.5">
               </ngx-charts-pie-chart>
             </div>
           </div>
@@ -41,8 +35,7 @@ import { CoursesStore } from '@store/course/course.store';
                 [results]="sources()"
                 [labels]="true"
                 [doughnut]="true"
-                [arcWidth]="0.5"
-              >
+                [arcWidth]="0.5">
               </ngx-charts-pie-chart>
             </div>
           </div>
@@ -54,12 +47,12 @@ import { CoursesStore } from '@store/course/course.store';
   styles: [],
 })
 export class DashboardComponent implements OnInit {
-  private store = inject(CoursesStore);
+  readonly #courseStore = inject(CoursesStore);
 
-  courses = this.store.coursesByPath;
-  sources = this.store.coursesBySource;
+  courses = this.#courseStore.coursesByPath;
+  sources = this.#courseStore.coursesBySource;
 
   ngOnInit() {
-    this.store.loadAllCourses();
+    this.#courseStore.loadAllCourses();
   }
 }

@@ -10,8 +10,6 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 import { APP_ROUTES } from './app.routes';
 import { CustomTitleStrategyService } from '@resolvers/custom-title-strategy.service';
-import { courseEffects } from '@store/course/course.effects';
-import { coursesFeature } from '@store/course/course.state';
 import { pathsEffects } from '@store/paths/paths.effects';
 import { pathsFeature } from '@store/paths/paths.state';
 import { sourcesEffects } from '@store/sources/sources.effects';
@@ -32,7 +30,8 @@ export const appConfig: ApplicationConfig = {
     provideStoreDevtools({
       maxAge: 5,
       logOnly: environment.production,
-    connectInZone: true}),
+      connectInZone: true,
+    }),
     provideRouter(APP_ROUTES, withComponentInputBinding()),
   ],
 };

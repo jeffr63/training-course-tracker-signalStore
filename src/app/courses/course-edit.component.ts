@@ -2,21 +2,20 @@ import { Component, OnInit, OnDestroy, inject, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AsyncPipe, Location } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { Store, select } from '@ngrx/store';
 import { ReplaySubject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import * as fromRoot from '@store/index';
-import { coursesActions } from '@store/course/course.actions';
-import { coursesFeature } from '@store/course/course.state';
+import { Course } from '@models/course';
 import { pathsActions } from '@store/paths/paths.actions';
 import { pathsFeature } from '@store/paths/paths.state';
 import { sourcesActions } from '@store/sources/sources.actions';
 import { sourcesFeature } from '@store/sources/sources.state';
-import { Course } from '@models/course';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { CoursesStore } from '@store/course/course.store';
 
 @Component({
   selector: 'app-course-edit',
@@ -122,46 +121,38 @@ import { toSignal } from '@angular/core/rxjs-interop';
     `,
   ],
 })
-export default class CourseEditComponent implements OnInit, OnDestroy {
-  private fb = inject(FormBuilder);
-  private location = inject(Location);
-  private store = inject(Store<fromRoot.State>);
+export default class CourseEditComponent implements OnInit {
+  readonly #fb = inject(FormBuilder);
+  readonly #location = inject(Location);
+  readonly #store = inject(Store<fromRoot.State>);
+  readonly #coursesStore = inject(CoursesStore);
 
   @Input() id;
   destroy$ = new ReplaySubject<void>(1);
-  paths = toSignal(this.store.pipe(select(pathsFeature.selectPaths)), { initialValue: [] });
-  sources = toSignal(this.store.pipe(select(sourcesFeature.selectSources)), { initialValue: [] });
+  paths = toSignal(this.#store.pipe(select(pathsFeature.selectPaths)), { initialValue: [] });
+  sources = toSignal(this.#store.pipe(select(sourcesFeature.selectSources)), { initialValue: [] });
   courseEditForm: FormGroup;
   course = <Course>{};
 
   ngOnInit() {
-    this.courseEditForm = this.fb.group({
+    this.courseEditForm = this.#fb.group({
       title: ['', Validators.required],
       instructor: ['', Validators.required],
       path: ['', Validators.required],
       source: ['', Validators.required],
     });
 
-    this.store.dispatch(pathsActions.loadPaths());
-    this.store.dispatch(sourcesActions.loadSources());
+    this.#store.dispatch(pathsActions.loadPaths());
+    this.#store.dispatch(sourcesActions.loadSources());
 
     if (this.id === 'new') return;
 
-    this.store.dispatch(coursesActions.getCourse({ id: +this.id }));
-    this.store
-      .pipe(select(coursesFeature.selectCurrentCourse))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((course: Course) => {
-        this.course = { ...course };
-        this.courseEditForm.get('title').setValue(this.course.title);
-        this.courseEditForm.get('instructor').setValue(this.course.instructor);
-        this.courseEditForm.get('path').setValue(this.course.path);
-        this.courseEditForm.get('source').setValue(this.course.source);
-      });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
+    this.#coursesStore.getCourse(this.id);
+    this.course = this.#coursesStore.currentCourse();
+    this.courseEditForm.get('title').setValue(this.course.title);
+    this.courseEditForm.get('instructor').setValue(this.course.instructor);
+    this.courseEditForm.get('path').setValue(this.course.path);
+    this.courseEditForm.get('source').setValue(this.course.source);
   }
 
   save() {
@@ -169,7 +160,7 @@ export default class CourseEditComponent implements OnInit, OnDestroy {
     this.course.instructor = this.courseEditForm.controls.instructor.value;
     this.course.path = this.courseEditForm.controls.path.value;
     this.course.source = this.courseEditForm.controls.source.value;
-    this.store.dispatch(coursesActions.saveCourse({ course: this.course }));
-    this.location.back();
+    this.#coursesStore.saveCourse({ course: this.course });
+    this.#location.back();
   }
 }

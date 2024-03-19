@@ -3,19 +3,14 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
 
-import * as fromRoot from '@store/index';
-import { coursesActions } from '@store/course/course.actions';
-import { coursesFeature } from '@store/course/course.state';
 import { AuthService } from '@services/auth.service';
 import { Course } from '@models/course';
+import { CoursesStore } from '@store/course/course.store';
 import { DeleteComponent } from '@modals/delete.component';
 import { ListDisplayComponent } from '@shared/list/list-display.component';
 import { ModalDataService } from '@modals/modal-data.service';
 import { PagerListHeaderComponent } from '@shared/list/pager-list-header.component';
-import { CoursesStore } from '@store/course/course.store';
 
 @Component({
   selector: 'app-course-list',
@@ -38,8 +33,7 @@ import { CoursesStore } from '@store/course/course.store';
             [(current)]="current"
             [isAuthenticated]="isLoggedIn()"
             (refreshTable)="refreshTable()"
-            (newCourse)="newCourse()"
-          ></app-pager-list-header>
+            (newCourse)="newCourse()"></app-pager-list-header>
 
           <app-list-display
             [headers]="headers"
@@ -47,8 +41,7 @@ import { CoursesStore } from '@store/course/course.store';
             [items]="courses()"
             [isAuthenticated]="isLoggedIn()"
             (deleteItem)="deleteCourse($event)"
-            (editItem)="editCourse($event)"
-          ></app-list-display>
+            (editItem)="editCourse($event)"></app-list-display>
         </section>
       </section>
     </section>
@@ -57,19 +50,18 @@ import { CoursesStore } from '@store/course/course.store';
   styles: [],
 })
 export default class CourseListComponent implements OnInit {
-  private store = inject(Store<fromRoot.State>);
-  private courseStore = inject(CoursesStore);
-  private modal = inject(NgbModal);
   public authService = inject(AuthService);
-  private modalDataService = inject(ModalDataService);
-  private router = inject(Router);
+  readonly #coursesStore = inject(CoursesStore);
+  readonly #modal = inject(NgbModal);
+  readonly #modalDataService = inject(ModalDataService);
+  readonly #router = inject(Router);
 
-  courses = this.courseStore.courses;
+  courses = this.#coursesStore.currentPage;
   selectCourse = signal<Course>({} as Course);
   current = 1;
   loading = signal(false);
   pageSize = 10;
-  totalCourses = this.courseStore.totalCourses;
+  totalCourses = this.#coursesStore.totalCourses;
   closedResult = '';
   columns = ['title', 'instructor', 'path', 'source'];
   headers = ['Title', 'Instructor', 'Path', 'Source'];
@@ -77,13 +69,10 @@ export default class CourseListComponent implements OnInit {
   isLoggedIn = this.authService.isLoggedIn;
 
   ngOnInit() {
-    this.store.dispatch(
-      coursesActions.loadCourses({
-        current: this.current,
-        pageSize: this.pageSize,
-      })
-    );
-    this.store.dispatch(coursesActions.getTotalCourses());
+    if (this.#coursesStore.totalCourses() == 0) {
+      this.#coursesStore.loadAllCourses();
+    }
+    this.#coursesStore.loadCourses({ current: this.current, pageSize: this.pageSize });
   }
 
   deleteCourse(id) {
@@ -92,32 +81,25 @@ export default class CourseListComponent implements OnInit {
       body: 'All information associated to this source will be permanently deleted.',
       warning: 'This operation cannot be undone.',
     };
-    this.modalDataService.setDeleteModalOptions(modalOptions);
-    this.modal.open(DeleteComponent).result.then((_result) => {
-      this.store.dispatch(
-        coursesActions.deleteCourse({
-          id: id,
-          current: this.current,
-          pageSize: this.pageSize,
-        })
-      );
+    this.#modalDataService.setDeleteModalOptions(modalOptions);
+    this.#modal.open(DeleteComponent).result.then((_result) => {
+      this.#coursesStore.deleteCourse({
+        id: id,
+        current: this.current,
+        pageSize: this.pageSize,
+      });
     });
   }
 
   editCourse(id) {
-    this.router.navigate(['/courses', id]);
+    this.#router.navigate(['/courses', id]);
   }
 
   newCourse() {
-    this.router.navigate(['/courses/new']);
+    this.#router.navigate(['/courses/new']);
   }
 
   refreshTable() {
-    this.store.dispatch(
-      coursesActions.loadCourses({
-        current: this.current,
-        pageSize: this.pageSize,
-      })
-    );
+    this.#coursesStore.loadCourses({ current: this.current, pageSize: this.pageSize });
   }
 }
