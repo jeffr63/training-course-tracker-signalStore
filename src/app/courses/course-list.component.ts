@@ -69,9 +69,6 @@ export default class CourseListComponent implements OnInit {
   isLoggedIn = this.authService.isLoggedIn;
 
   ngOnInit() {
-    if (this.#coursesStore.totalCourses() == 0) {
-      this.#coursesStore.loadAllCourses();
-    }
     this.#coursesStore.loadCourses({ current: this.current, pageSize: this.pageSize });
   }
 

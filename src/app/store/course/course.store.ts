@@ -1,6 +1,6 @@
 import { computed, inject } from '@angular/core';
 
-import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
 import { tapResponse } from '@ngrx/operators';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { concatMap, pipe, switchMap } from 'rxjs';
@@ -92,6 +92,11 @@ export const CoursesStore = signalStore(
         )
       ),
     };
+  }),
+  withHooks({
+    onInit(store) {
+      store.loadAllCourses();
+    },
   })
 );
 

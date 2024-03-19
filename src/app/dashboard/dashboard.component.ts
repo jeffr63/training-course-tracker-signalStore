@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -46,13 +46,9 @@ import { CoursesStore } from '@store/course/course.store';
 
   styles: [],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   readonly #courseStore = inject(CoursesStore);
 
   courses = this.#courseStore.coursesByPath;
   sources = this.#courseStore.coursesBySource;
-
-  ngOnInit() {
-    this.#courseStore.loadAllCourses();
-  }
 }

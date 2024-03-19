@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, Input } from '@angular/core';
+import { Component, OnInit, inject, Input, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AsyncPipe, Location } from '@angular/common';
@@ -6,7 +6,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 import { Store, select } from '@ngrx/store';
 import { ReplaySubject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import * as fromRoot from '@store/index';
@@ -20,6 +19,7 @@ import { CoursesStore } from '@store/course/course.store';
 @Component({
   selector: 'app-course-edit',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AsyncPipe, NgbModule, ReactiveFormsModule, RouterLink],
 
   template: `
