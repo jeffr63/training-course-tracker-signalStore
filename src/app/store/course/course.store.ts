@@ -3,7 +3,7 @@ import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
 import { tapResponse } from '@ngrx/operators';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { concatMap, pipe, switchMap } from 'rxjs';
+import { concatMap, debounceTime, distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
 
 import { chain, orderBy, reduce } from 'lodash';
 
@@ -20,7 +20,7 @@ export interface State {
 export const initialState: State = {
   courses: [],
   currentPage: [],
-  currentCourse: null,
+  currentCourse: { id: 0, title: '', instructor: '', path: '' } as Course,
   error: '',
 };
 
@@ -34,60 +34,77 @@ export const CoursesStore = signalStore(
       coursesBySource: computed(() => getBySourceValue(courses())),
     };
   }),
-  withMethods((state) => {
+  withMethods((store) => {
     const coursesService = inject(CoursesService);
     return {
       getCourse: rxMethod<number>(
         pipe(
-          switchMap((id) => coursesService.getCourse(id)),
-          tapResponse({
-            next: (course: Course) => patchState(state, { currentCourse: course }),
-            error: (error: string) => patchState(state, { error }),
+          switchMap((id) => {
+            return coursesService.getCourse(id).pipe(
+              tapResponse({
+                next: (course: Course) => patchState(store, { currentCourse: course }),
+                error: (error: string) => patchState(store, { error }),
+              })
+            );
           })
         )
       ),
       loadAllCourses: rxMethod<void>(
         pipe(
-          switchMap(() => coursesService.getCourses()),
-          tapResponse({
-            next: (courses: Course[]) => patchState(state, { courses }),
-            error: (error: string) => patchState(state, { error }),
+          switchMap(() => {
+            return coursesService.getCourses().pipe(
+              tapResponse({
+                next: (courses: Course[]) => patchState(store, { courses }),
+                error: (error: string) => patchState(store, { error }),
+              })
+            );
           })
         )
       ),
       loadCourses: rxMethod<{ current: number; pageSize: number }>(
         pipe(
-          switchMap(({ current, pageSize }) => coursesService.getCoursesPaged(current, pageSize)),
-          tapResponse({
-            next: (courses: Course[]) => patchState(state, { currentPage: courses }),
-            error: (error: string) => patchState(state, { error }),
+          debounceTime(300),
+          distinctUntilChanged(),
+          switchMap(({ current, pageSize }) => {
+            return coursesService.getCoursesPaged(current, pageSize).pipe(
+              tapResponse({
+                next: (courses: Course[]) => patchState(store, { currentPage: courses }),
+                error: (error: string) => patchState(store, { error }),
+              })
+            );
           })
         )
       ),
     };
   }),
   // add second withMethods so it can call other store methods
-  withMethods((state) => {
+  withMethods((store) => {
     const coursesService = inject(CoursesService);
     return {
       deleteCourse: rxMethod<{ id: number; current: number; pageSize: number }>(
         pipe(
-          concatMap(({ id }) => coursesService.deleteCourse(id)),
-          tapResponse({
-            next: ({ current, pageSize }) => {
-              state.loadAllCourses();
-              state.loadCourses({ current, pageSize });
-            },
-            error: (error: string) => patchState(state, { error }),
+          concatMap(({ id, current, pageSize }) => {
+            return coursesService.deleteCourse(id).pipe(
+              tapResponse({
+                next: () => {
+                  store.loadAllCourses();
+                  store.loadCourses({ current, pageSize });
+                },
+                error: (error: string) => patchState(store, { error }),
+              })
+            );
           })
         )
       ),
       saveCourse: rxMethod<{ course: Course }>(
         pipe(
-          concatMap(({ course }) => coursesService.saveCourse(course)),
-          tapResponse({
-            next: () => state.loadAllCourses(),
-            error: (error: string) => patchState(state, { error }),
+          concatMap(({ course }) => {
+            return coursesService.saveCourse(course).pipe(
+              tapResponse({
+                next: () => store.loadAllCourses(),
+                error: (error: string) => patchState(store, { error }),
+              })
+            );
           })
         )
       ),
@@ -100,6 +117,7 @@ export const CoursesStore = signalStore(
   })
 );
 
+// helper functions
 function getByPathValue(courses: Course[]): CourseData[] {
   let byPath = chain(courses)
     .groupBy('path')

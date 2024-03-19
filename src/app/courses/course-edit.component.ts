@@ -1,11 +1,10 @@
-import { Component, OnInit, inject, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, Input, ChangeDetectionStrategy, effect } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AsyncPipe, Location } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 import { Store, select } from '@ngrx/store';
-import { ReplaySubject } from 'rxjs';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import * as fromRoot from '@store/index';
@@ -31,6 +30,7 @@ import { CoursesStore } from '@store/course/course.store';
             <label class="col-form-label col-sm-2" for="title">Title</label>
             <div class="col-sm-6">
               <input
+                id="title"
                 type="text"
                 class="form-control"
                 formControlName="title"
@@ -45,6 +45,7 @@ import { CoursesStore } from '@store/course/course.store';
             <label class="col-form-label col-sm-2" for="instructor">Instructor</label>
             <div class="col-sm-6">
               <input
+                id="instructor"
                 type="text"
                 class="form-control"
                 formControlName="instructor"
@@ -59,6 +60,7 @@ import { CoursesStore } from '@store/course/course.store';
             <label class="col-form-label col-sm-2" for="path">Path</label>
             <div class="col-sm-6">
               <input
+                id="path"
                 type="text"
                 class="form-control"
                 formControlName="path"
@@ -79,6 +81,7 @@ import { CoursesStore } from '@store/course/course.store';
             <label class="col-form-label col-sm-2" for="source">Source</label>
             <div class="col-sm-6">
               <input
+                id="source"
                 type="text"
                 class="form-control"
                 formControlName="source"
@@ -128,11 +131,14 @@ export default class CourseEditComponent implements OnInit {
   readonly #coursesStore = inject(CoursesStore);
 
   @Input() id;
-  destroy$ = new ReplaySubject<void>(1);
+  #course: Course;
   paths = toSignal(this.#store.pipe(select(pathsFeature.selectPaths)), { initialValue: [] });
   sources = toSignal(this.#store.pipe(select(sourcesFeature.selectSources)), { initialValue: [] });
   courseEditForm: FormGroup;
-  course = <Course>{};
+
+  constructor() {
+    effect(() => this.setCourse(this.#coursesStore.currentCourse()));
+  }
 
   ngOnInit() {
     this.courseEditForm = this.#fb.group({
@@ -148,19 +154,23 @@ export default class CourseEditComponent implements OnInit {
     if (this.id === 'new') return;
 
     this.#coursesStore.getCourse(this.id);
-    this.course = this.#coursesStore.currentCourse();
-    this.courseEditForm.get('title').setValue(this.course.title);
-    this.courseEditForm.get('instructor').setValue(this.course.instructor);
-    this.courseEditForm.get('path').setValue(this.course.path);
-    this.courseEditForm.get('source').setValue(this.course.source);
   }
 
   save() {
-    this.course.title = this.courseEditForm.controls.title.value;
-    this.course.instructor = this.courseEditForm.controls.instructor.value;
-    this.course.path = this.courseEditForm.controls.path.value;
-    this.course.source = this.courseEditForm.controls.source.value;
-    this.#coursesStore.saveCourse({ course: this.course });
+    this.#course.title = this.courseEditForm.controls.title.value;
+    this.#course.instructor = this.courseEditForm.controls.instructor.value;
+    this.#course.path = this.courseEditForm.controls.path.value;
+    this.#course.source = this.courseEditForm.controls.source.value;
+    this.#coursesStore.saveCourse({ course: this.#course });
     this.#location.back();
+  }
+
+  setCourse(course: Course) {
+    if (this.id == 'new') return;
+    this.#course = course;
+    this.courseEditForm.get('title').setValue(this.#course.title);
+    this.courseEditForm.get('instructor').setValue(this.#course.instructor);
+    this.courseEditForm.get('path').setValue(this.#course.path);
+    this.courseEditForm.get('source').setValue(this.#course.source);
   }
 }
