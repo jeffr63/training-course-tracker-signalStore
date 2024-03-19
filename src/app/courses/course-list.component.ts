@@ -15,6 +15,7 @@ import { DeleteComponent } from '@modals/delete.component';
 import { ListDisplayComponent } from '@shared/list/list-display.component';
 import { ModalDataService } from '@modals/modal-data.service';
 import { PagerListHeaderComponent } from '@shared/list/pager-list-header.component';
+import { CoursesStore } from '@store/course/course.store';
 
 @Component({
   selector: 'app-course-list',
@@ -31,7 +32,7 @@ import { PagerListHeaderComponent } from '@shared/list/pager-list-header.compone
         <section class="card-body">
           <app-pager-list-header
             includePager="true"
-            [total]="totalCourses$ | async"
+            [total]="totalCourses()"
             [pageSize]="pageSize"
             [maxSize]="5"
             [(current)]="current"
@@ -43,7 +44,7 @@ import { PagerListHeaderComponent } from '@shared/list/pager-list-header.compone
           <app-list-display
             [headers]="headers"
             [columns]="columns"
-            [items]="courses$ | async"
+            [items]="courses()"
             [isAuthenticated]="isLoggedIn()"
             (deleteItem)="deleteCourse($event)"
             (editItem)="editCourse($event)"
@@ -57,17 +58,18 @@ import { PagerListHeaderComponent } from '@shared/list/pager-list-header.compone
 })
 export default class CourseListComponent implements OnInit {
   private store = inject(Store<fromRoot.State>);
+  private courseStore = inject(CoursesStore);
   private modal = inject(NgbModal);
   public authService = inject(AuthService);
   private modalDataService = inject(ModalDataService);
   private router = inject(Router);
 
-  courses$: Observable<Course[]>;
+  courses = this.courseStore.courses;
   selectCourse = signal<Course>({} as Course);
   current = 1;
   loading = signal(false);
   pageSize = 10;
-  totalCourses$: Observable<number>;
+  totalCourses = this.courseStore.totalCourses;
   closedResult = '';
   columns = ['title', 'instructor', 'path', 'source'];
   headers = ['Title', 'Instructor', 'Path', 'Source'];
@@ -82,8 +84,6 @@ export default class CourseListComponent implements OnInit {
       })
     );
     this.store.dispatch(coursesActions.getTotalCourses());
-    this.courses$ = this.store.pipe(select(coursesFeature.selectCourses));
-    this.totalCourses$ = this.store.pipe(select(coursesFeature.selectTotalCourses));
   }
 
   deleteCourse(id) {

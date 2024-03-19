@@ -6,19 +6,15 @@ import { Course, CourseData } from '@models/course';
 
 export interface State {
   courses: Course[];
+  currentPage: Course[];
   currentCourse: Course;
-  totalCourses: number;
-  coursesByPath: CourseData[];
-  coursesBySource: CourseData[];
   error: string;
 }
 
-const initialState: State = {
+export const initialState: State = {
   courses: [],
+  currentPage: [],
   currentCourse: null,
-  totalCourses: 0,
-  coursesByPath: [],
-  coursesBySource: [],
   error: '',
 };
 

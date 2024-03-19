@@ -9,7 +9,6 @@ import { provideState, provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 import { APP_ROUTES } from './app.routes';
-import { AppEffects } from '@store/app.effects';
 import { CustomTitleStrategyService } from '@resolvers/custom-title-strategy.service';
 import { courseEffects } from '@store/course/course.effects';
 import { coursesFeature } from '@store/course/course.state';
@@ -26,11 +25,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(),
     provideStore(),
-    provideState(coursesFeature),
     provideState(pathsFeature),
     provideState(sourcesFeature),
     provideState(usersFeature),
-    provideEffects([courseEffects, pathsEffects, sourcesEffects, usersEffects]),
+    provideEffects([pathsEffects, sourcesEffects, usersEffects]),
     provideStoreDevtools({
       maxAge: 5,
       logOnly: environment.production,

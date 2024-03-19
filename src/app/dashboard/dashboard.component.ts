@@ -8,6 +8,7 @@ import { Store, select } from '@ngrx/store';
 import * as fromRoot from '@store/index';
 import { coursesActions } from '@store/course/course.actions';
 import { coursesFeature } from '@store/course/course.state';
+import { CoursesStore } from '@store/course/course.store';
 
 @Component({
   selector: 'app-dashboard',
@@ -53,12 +54,12 @@ import { coursesFeature } from '@store/course/course.state';
   styles: [],
 })
 export class DashboardComponent implements OnInit {
-  private store = inject(Store<fromRoot.State>);
+  private store = inject(CoursesStore);
 
-  courses = toSignal(this.store.pipe(select(coursesFeature.selectCoursesByPath)), { initialValue: [] });
-  sources = toSignal(this.store.pipe(select(coursesFeature.selectCoursesBySource)), { initialValue: [] });
+  courses = this.store.coursesByPath;
+  sources = this.store.coursesBySource;
 
   ngOnInit() {
-    this.store.dispatch(coursesActions.getTotalCourses());
+    this.store.loadAllCourses();
   }
 }
