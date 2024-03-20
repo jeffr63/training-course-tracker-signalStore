@@ -1,19 +1,14 @@
-import { Component, OnInit, inject, Input, ChangeDetectionStrategy, effect } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy, effect, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AsyncPipe, Location } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
 
-import { Store, select } from '@ngrx/store';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import * as fromRoot from '@store/index';
 import { Course } from '@models/course';
-import { pathsActions } from '@store/paths/paths.actions';
-import { pathsFeature } from '@store/paths/paths.state';
-import { sourcesActions } from '@store/sources/sources.actions';
-import { sourcesFeature } from '@store/sources/sources.state';
-import { CoursesStore } from '@store/course/course.store';
+import { CoursesStore } from '@store/course.store';
+import { PathsStore } from '@store/paths.store';
+import { SourcesStore } from '@store/sources.store';
 
 @Component({
   selector: 'app-course-edit',
@@ -125,16 +120,17 @@ import { CoursesStore } from '@store/course/course.store';
   ],
 })
 export default class CourseEditComponent implements OnInit {
+  readonly #coursesStore = inject(CoursesStore);
   readonly #fb = inject(FormBuilder);
   readonly #location = inject(Location);
-  readonly #store = inject(Store<fromRoot.State>);
-  readonly #coursesStore = inject(CoursesStore);
+  readonly #pathsStore = inject(PathsStore);
+  readonly #sourcesStore = inject(SourcesStore);
 
-  @Input() id;
   #course: Course;
-  paths = toSignal(this.#store.pipe(select(pathsFeature.selectPaths)), { initialValue: [] });
-  sources = toSignal(this.#store.pipe(select(sourcesFeature.selectSources)), { initialValue: [] });
   courseEditForm: FormGroup;
+  id = input<string>();
+  paths = this.#pathsStore.paths;
+  sources = this.#sourcesStore.sources;
 
   constructor() {
     effect(() => this.setCourse(this.#coursesStore.currentCourse()));
@@ -148,12 +144,9 @@ export default class CourseEditComponent implements OnInit {
       source: ['', Validators.required],
     });
 
-    this.#store.dispatch(pathsActions.loadPaths());
-    this.#store.dispatch(sourcesActions.loadSources());
+    if (this.id() === 'new') return;
 
-    if (this.id === 'new') return;
-
-    this.#coursesStore.getCourse(this.id);
+    this.#coursesStore.getCourse(+this.id());
   }
 
   save() {
@@ -166,11 +159,11 @@ export default class CourseEditComponent implements OnInit {
   }
 
   setCourse(course: Course) {
-    if (this.id == 'new') return;
+    if (this.id() == 'new') return;
     this.#course = course;
-    this.courseEditForm.get('title').setValue(this.#course.title);
-    this.courseEditForm.get('instructor').setValue(this.#course.instructor);
-    this.courseEditForm.get('path').setValue(this.#course.path);
-    this.courseEditForm.get('source').setValue(this.#course.source);
+    this.courseEditForm.get('title').setValue(course.title);
+    this.courseEditForm.get('instructor').setValue(course.instructor);
+    this.courseEditForm.get('path').setValue(course.path);
+    this.courseEditForm.get('source').setValue(course.source);
   }
 }

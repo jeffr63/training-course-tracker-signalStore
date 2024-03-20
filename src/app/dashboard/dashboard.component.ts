@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
-import { CoursesStore } from '@store/course/course.store';
+import { CoursesStore } from '@store/course.store';
 
 @Component({
   selector: 'app-dashboard',

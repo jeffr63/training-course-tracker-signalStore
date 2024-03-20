@@ -1,19 +1,15 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Observable } from 'rxjs';
-import { Store, select } from '@ngrx/store';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import * as fromRoot from '@store/index';
-import { sourcesActions } from '@store/sources/sources.actions';
-import { sourcesFeature } from '@store/sources/sources.state';
 import { DeleteComponent } from '@modals/delete.component';
 import { ListDisplayComponent } from '@shared/list/list-display.component';
 import { ListHeaderComponent } from '@shared/list/list-header.component';
 import { ModalDataService } from '@modals/modal-data.service';
 import { Source } from '@models/sources';
+import { SourcesStore } from '@store/sources.store';
 
 @Component({
   selector: 'app-source-list',
@@ -33,11 +29,10 @@ import { Source } from '@models/sources';
           <app-list-display
             [headers]="headers"
             [columns]="columns"
-            [items]="source$ | async"
+            [items]="sources()"
             [isAuthenticated]="isAuthenticated"
             (deleteItem)="deleteSource($event)"
-            (editItem)="editSource($event)"
-          ></app-list-display>
+            (editItem)="editSource($event)"></app-list-display>
         </section>
       </section>
     </section>
@@ -51,22 +46,17 @@ import { Source } from '@models/sources';
     `,
   ],
 })
-export default class SourceListComponent implements OnInit {
-  private modal = inject(NgbModal);
-  private modalDataService = inject(ModalDataService);
-  private router = inject(Router);
-  private store = inject(Store<fromRoot.State>);
+export default class SourceListComponent {
+  readonly #modal = inject(NgbModal);
+  readonly #modalDataService = inject(ModalDataService);
+  readonly #router = inject(Router);
+  readonly #sourcesStore = inject(SourcesStore);
 
   columns = ['name'];
   headers = ['Source'];
   isAuthenticated = true;
-  source$: Observable<any[]>;
+  sources = this.#sourcesStore.sources;
   selectPath = <Source>{};
-
-  ngOnInit() {
-    this.store.dispatch(sourcesActions.loadSources());
-    this.source$ = this.store.pipe(select(sourcesFeature.selectSources));
-  }
 
   deleteSource(id) {
     const modalOptions = {
@@ -74,17 +64,17 @@ export default class SourceListComponent implements OnInit {
       body: 'All information associated to this source will be permanently deleted.',
       warning: 'This operation cannot be undone.',
     };
-    this.modalDataService.setDeleteModalOptions(modalOptions);
-    this.modal.open(DeleteComponent).result.then((_result) => {
-      this.store.dispatch(sourcesActions.deleteSource({ id }));
+    this.#modalDataService.setDeleteModalOptions(modalOptions);
+    this.#modal.open(DeleteComponent).result.then((_result) => {
+      this.#sourcesStore.deleteSource(id);
     });
   }
 
   editSource(id: number) {
-    this.router.navigate(['/admin/sources', id]);
+    this.#router.navigate(['/admin/sources', id]);
   }
 
   newSource() {
-    this.router.navigate(['/admin/sources/new']);
+    this.#router.navigate(['/admin/sources/new']);
   }
 }

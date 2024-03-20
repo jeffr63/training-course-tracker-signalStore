@@ -1,19 +1,15 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
 
-import * as fromRoot from '@store/index';
-import { pathsFeature } from '@store/paths/paths.state';
-import { pathsActions } from '@store/paths/paths.actions';
 import { DeleteComponent } from '@modals/delete.component';
 import { ListDisplayComponent } from '@shared/list/list-display.component';
 import { ListHeaderComponent } from '@shared/list/list-header.component';
 import { ModalDataService } from '@modals/modal-data.service';
 import { Path } from '@models/paths';
+import { PathsStore } from '@store/paths.store';
 
 @Component({
   selector: 'app-path-list',
@@ -33,11 +29,10 @@ import { Path } from '@models/paths';
           <app-list-display
             [headers]="headers"
             [columns]="columns"
-            [items]="paths$ | async"
+            [items]="paths()"
             [isAuthenticated]="isAuthenticated"
             (deleteItem)="deletePath($event)"
-            (editItem)="editPath($event)"
-          ></app-list-display>
+            (editItem)="editPath($event)"></app-list-display>
         </section>
       </section>
     </section>
@@ -45,22 +40,17 @@ import { Path } from '@models/paths';
 
   styles: ['header { padding-bottom: 10px; }'],
 })
-export default class PathListComponent implements OnInit {
-  private modal = inject(NgbModal);
-  private modalDataService = inject(ModalDataService);
-  private router = inject(Router);
-  private store = inject(Store<fromRoot.State>);
+export default class PathListComponent {
+  readonly #modal = inject(NgbModal);
+  readonly #modalDataService = inject(ModalDataService);
+  readonly #pathsStore = inject(PathsStore);
+  readonly #router = inject(Router);
 
   columns = ['name'];
   headers = ['Path'];
   isAuthenticated = true;
-  paths$: Observable<any[]>;
+  paths = this.#pathsStore.paths;
   selectPath = <Path>{};
-
-  ngOnInit() {
-    this.store.dispatch(pathsActions.loadPaths());
-    this.paths$ = this.store.pipe(select(pathsFeature.selectPaths));
-  }
 
   deletePath(id) {
     const modalOptions = {
@@ -68,17 +58,17 @@ export default class PathListComponent implements OnInit {
       body: 'All information associated to this source will be permanently deleted.',
       warning: 'This operation cannot be undone.',
     };
-    this.modalDataService.setDeleteModalOptions(modalOptions);
-    this.modal.open(DeleteComponent).result.then((_result) => {
-      this.store.dispatch(pathsActions.deletePath({ id: id }));
+    this.#modalDataService.setDeleteModalOptions(modalOptions);
+    this.#modal.open(DeleteComponent).result.then((_result) => {
+      this.#pathsStore.deletePath(id);
     });
   }
 
   editPath(id: number) {
-    this.router.navigate(['/admin/paths', id]);
+    this.#router.navigate(['/admin/paths', id]);
   }
 
   newPath() {
-    this.router.navigate(['/admin/paths/new']);
+    this.#router.navigate(['/admin/paths/new']);
   }
 }

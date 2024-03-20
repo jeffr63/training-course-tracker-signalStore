@@ -1,17 +1,12 @@
-import { Component, OnInit, OnDestroy, inject, Input } from '@angular/core';
+import { Component, OnInit, inject, effect, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ReplaySubject } from 'rxjs';
-import { Store, select } from '@ngrx/store';
-import { takeUntil } from 'rxjs/operators';
 
-import * as fromRoot from '@store/index';
-import { pathsActions } from '@store/paths/paths.actions';
-import { pathsFeature } from '@store/paths/paths.state';
 import { Path } from '@models/paths';
+import { PathsStore } from '@store/paths.store';
 
 @Component({
   selector: 'app-path-edit',
@@ -60,40 +55,37 @@ import { Path } from '@models/paths';
     `,
   ],
 })
-export default class PathEditComponent implements OnInit, OnDestroy {
-  private fb = inject(FormBuilder);
-  private location = inject(Location);
-  private store = inject(Store<fromRoot.State>);
+export default class PathEditComponent implements OnInit {
+  readonly #fb = inject(FormBuilder);
+  readonly #location = inject(Location);
+  readonly #pathsStore = inject(PathsStore);
 
-  @Input() id;
-  destroy$ = new ReplaySubject<void>(1);
+  id = input<string>();
   pathEditForm!: FormGroup;
-  path = <Path>{};
+  #path: Path;
+
+  constructor() {
+    effect(() => this.setPath(this.#pathsStore.currentPath()));
+  }
 
   ngOnInit() {
-    this.pathEditForm = this.fb.group({
+    this.pathEditForm = this.#fb.group({
       name: ['', Validators.required],
     });
 
-    if (this.id === 'new') return;
+    if (this.id() === 'new') return;
 
-    this.store.dispatch(pathsActions.getPath({ id: +this.id }));
-    this.store
-      .pipe(select(pathsFeature.selectCurrentPath))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((path: Path) => {
-        this.path = { ...path };
-        this.pathEditForm.get('name').setValue(this.path.name);
-      });
+    this.#pathsStore.getPath(+this.id());
   }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-  }
-
   save() {
-    this.path.name = this.pathEditForm.controls.name.value;
-    this.store.dispatch(pathsActions.savePath({ path: this.path }));
-    this.location.back();
+    this.#path.name = this.pathEditForm.controls.name.value;
+    this.#pathsStore.savePath({ path: this.#path });
+    this.#location.back();
+  }
+
+  setPath(path: Path) {
+    if (this.id() == 'new') return;
+    this.#path = path;
+    this.pathEditForm.get('name').setValue(path.name);
   }
 }

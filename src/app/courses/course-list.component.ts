@@ -6,7 +6,7 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AuthService } from '@services/auth.service';
 import { Course } from '@models/course';
-import { CoursesStore } from '@store/course/course.store';
+import { CoursesStore } from '@store/course.store';
 import { DeleteComponent } from '@modals/delete.component';
 import { ListDisplayComponent } from '@shared/list/list-display.component';
 import { ModalDataService } from '@modals/modal-data.service';

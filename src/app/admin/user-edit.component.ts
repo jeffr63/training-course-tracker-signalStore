@@ -1,17 +1,12 @@
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnInit, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
 
-import { takeUntil } from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Store, select } from '@ngrx/store';
-import { ReplaySubject } from 'rxjs';
 
-import * as fromRoot from '@store/index';
-import { usersActions } from '@store/users/users.actions';
-import { usersFeature } from '@store/users/users.state';
 import { User } from '@models/user';
+import { UsersStore } from '@store/users.store';
 
 @Component({
   selector: 'app-user-edit',
@@ -87,37 +82,29 @@ import { User } from '@models/user';
     `,
   ],
 })
-export default class UserEditComponent implements OnInit, OnDestroy {
-  private fb = inject(FormBuilder);
-  private location = inject(Location);
-  private store = inject(Store<fromRoot.State>);
+export default class UserEditComponent implements OnInit {
+  readonly #fb = inject(FormBuilder);
+  readonly #location = inject(Location);
+  readonly #usersStore = inject(UsersStore);
 
-  @Input() id;
-  destroy$ = new ReplaySubject<void>(1);
+  id = input<string>();
   userEditForm!: FormGroup;
-  private user = <User>{};
+  #user: User;
+
+  constructor() {
+    effect(() => this.setUser(this.#usersStore.currentUser()));
+  }
 
   ngOnInit() {
-    this.userEditForm = this.fb.group({
+    this.userEditForm = this.#fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       role: ['', Validators.required],
     });
 
-    this.store.dispatch(usersActions.getUser({ id: +this.id }));
-    this.store
-      .pipe(select(usersFeature.selectCurrentUser))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((user: User) => {
-        this.user = { ...user };
-        this.userEditForm.get('name').setValue(this.user.name);
-        this.userEditForm.get('email').setValue(this.user.email);
-        this.userEditForm.get('role').setValue(this.user.role);
-      });
-  }
+    if (this.id() == 'new') return;
 
-  ngOnDestroy() {
-    this.destroy$.next();
+    this.#usersStore.getUser(+this.id());
   }
 
   save() {
@@ -127,7 +114,16 @@ export default class UserEditComponent implements OnInit, OnDestroy {
       role: this.userEditForm.controls.role.value,
     };
 
-    this.store.dispatch(usersActions.patchUser({ id: this.user.id, user: patchData }));
-    this.location.back();
+    this.#usersStore.patchUser({ id: this.#user.id, user: patchData });
+    this.#location.back();
+  }
+
+  setUser(user: User) {
+    if (this.id() == 'new') return;
+
+    this.#user = user;
+    this.userEditForm.get('name').setValue(user.name);
+    this.userEditForm.get('email').setValue(user.email);
+    this.userEditForm.get('role').setValue(user.role);
   }
 }

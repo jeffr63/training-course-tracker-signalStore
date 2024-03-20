@@ -1,17 +1,12 @@
-import { Component, OnInit, OnDestroy, inject, Input } from '@angular/core';
+import { Component, OnInit, inject, effect, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
 
-import { takeUntil } from 'rxjs/operators';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Store, select } from '@ngrx/store';
 
-import * as fromRoot from '@store/index';
-import { sourcesActions } from '@store/sources/sources.actions';
-import { sourcesFeature } from '@store/sources/sources.state';
 import { Source } from '@models/sources';
-import { ReplaySubject } from 'rxjs';
+import { SourcesStore } from '@store/sources.store';
 
 @Component({
   selector: 'app-source-edit',
@@ -60,40 +55,39 @@ import { ReplaySubject } from 'rxjs';
     `,
   ],
 })
-export default class SourceEditComponent implements OnInit, OnDestroy {
-  private fb = inject(FormBuilder);
-  private location = inject(Location);
-  private store = inject(Store<fromRoot.State>);
+export default class SourceEditComponent implements OnInit {
+  readonly #fb = inject(FormBuilder);
+  readonly #location = inject(Location);
+  readonly #sourcesStore = inject(SourcesStore);
 
-  @Input() id;
-  destroy$ = new ReplaySubject<void>(1);
+  id = input<string>();
   sourceEditForm: FormGroup;
-  private source = <Source>{};
+  #source: Source;
+
+  constructor() {
+    effect(() => this.setSource(this.#sourcesStore.currentSource()));
+  }
 
   ngOnInit() {
-    this.sourceEditForm = this.fb.group({
+    this.sourceEditForm = this.#fb.group({
       name: ['', Validators.required],
     });
 
-    if (this.id === 'new') return;
+    if (this.id() === 'new') return;
 
-    this.store.dispatch(sourcesActions.getSource({ id: +this.id }));
-    this.store
-      .pipe(select(sourcesFeature.selectCurrentSource))
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((source: Source) => {
-        this.source = { ...source };
-        this.sourceEditForm.get('name').setValue(this.source.name);
-      });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
+    this.#sourcesStore.getSource(+this.id());
   }
 
   save() {
-    this.source.name = this.sourceEditForm.controls.name.value;
-    this.store.dispatch(sourcesActions.saveSource({ source: this.source }));
-    this.location.back();
+    this.#source.name = this.sourceEditForm.controls.name.value;
+    this.#sourcesStore.saveSource({ source: this.#source });
+    this.#location.back();
+  }
+
+  setSource(source: Source) {
+    if (this.id() == 'new') return;
+
+    this.#source = source;
+    this.sourceEditForm.get('name').setValue(source.name);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, input, output } from '@angular/core';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -10,15 +10,15 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   template: `
     <table class="table table-striped">
       <thead>
-        @for (header of headers; track header) {
+        @for (header of headers(); track header) {
         <th>{{ header }}</th>
         }
         <th>&nbsp;</th>
       </thead>
       <tbody>
-        @for (item of items; track item) {
+        @for (item of items(); track $index) {
         <tr>
-          @for (column of columns; track column) {
+          @for (column of columns(); track column) {
           <td>{{ item[column] }}</td>
           } @if (isAuthenticated) {
           <td>
@@ -39,12 +39,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   styles: [],
 })
 export class ListDisplayComponent {
-  @Input() columns: string[];
-  @Input() headers: string[];
-  @Input() items: any[];
-  @Input() isAuthenticated: boolean;
-  @Output() deleteItem = new EventEmitter();
-  @Output() editItem = new EventEmitter();
+  columns = input.required<string[]>();
+  headers = input.required<string[]>();
+  items = input.required<any[]>();
+  isAuthenticated = input.required<boolean>();
+  deleteItem = output<number>();
+  editItem = output<number>();
 
   editClicked(id: number) {
     this.editItem.emit(id);
