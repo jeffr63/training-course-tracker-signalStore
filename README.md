@@ -1,10 +1,10 @@
-# Training Course Tracker - ngrx
+# Training Course Tracker - ngrx SignalStore
 
-[Angular CLI](https://github.com/angular/angular-cli) version 13.2.1.
+[Angular CLI](https://github.com/angular/angular-cli) version 17.3.
 
 ## Technologies included
 
-Angular, rxjs, ngrx, ng-bootstrap, bootstrap-icons, json-server, json-server-auth, lodash, swimlane/ngx-charts
+Angular, rxjs, ngrx SignalStore, ng-bootstrap, bootstrap-icons, json-server, json-server-auth, lodash, swimlane/ngx-charts
 
 ## JSON-SERVER
 
