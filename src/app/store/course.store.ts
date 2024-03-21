@@ -27,11 +27,31 @@ export const initialState: State = {
 export const CoursesStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
-  withComputed(({ courses }) => {
+  withComputed((store) => {
+    const getByValue = (courses: Course[], groupBy: string): CourseData[] => {
+      let byPath = chain(courses)
+        .groupBy(groupBy)
+        .map((values, key) => {
+          return {
+            name: key,
+            value: reduce(
+              values,
+              function (value, number) {
+                return value + 1;
+              },
+              0
+            ),
+          };
+        })
+        .value();
+      byPath = orderBy(byPath, 'value', 'desc');
+      return byPath;
+    };
+
     return {
-      totalCourses: computed(() => courses().length),
-      coursesByPath: computed(() => getByPathValue(courses())),
-      coursesBySource: computed(() => getBySourceValue(courses())),
+      totalCourses: computed(() => store.courses().length),
+      coursesByPath: computed(() => getByValue(store.courses(), 'path')),
+      coursesBySource: computed(() => getByValue(store.courses(), 'source')),
     };
   }),
   withMethods((store) => {
@@ -80,6 +100,7 @@ export const CoursesStore = signalStore(
   // add second withMethods so it can call other store methods
   withMethods((store) => {
     const coursesService = inject(CoursesService);
+
     return {
       deleteCourse: rxMethod<{ id: number; current: number; pageSize: number }>(
         pipe(
@@ -116,44 +137,3 @@ export const CoursesStore = signalStore(
     },
   })
 );
-
-// helper functions
-function getByPathValue(courses: Course[]): CourseData[] {
-  let byPath = chain(courses)
-    .groupBy('path')
-    .map((values, key) => {
-      return {
-        name: key,
-        value: reduce(
-          values,
-          function (value, number) {
-            return value + 1;
-          },
-          0
-        ),
-      };
-    })
-    .value();
-  byPath = orderBy(byPath, 'value', 'desc');
-  return byPath;
-}
-
-function getBySourceValue(course: Course[]): CourseData[] {
-  let bySource = chain(course)
-    .groupBy('source')
-    .map((values, key) => {
-      return {
-        name: key,
-        value: reduce(
-          values,
-          function (value, number) {
-            return value + 1;
-          },
-          0
-        ),
-      };
-    })
-    .value();
-  bySource = orderBy(bySource, 'value', 'desc');
-  return bySource;
-}
