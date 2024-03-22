@@ -33,7 +33,8 @@ import { PagerListHeaderComponent } from '@shared/list/pager-list-header.compone
             [(current)]="current"
             [isAuthenticated]="isLoggedIn()"
             (refreshTable)="refreshTable()"
-            (newCourse)="newCourse()"></app-pager-list-header>
+            (newCourse)="newCourse()">
+          </app-pager-list-header>
 
           <app-list-display
             [headers]="headers"
@@ -41,7 +42,8 @@ import { PagerListHeaderComponent } from '@shared/list/pager-list-header.compone
             [items]="courses()"
             [isAuthenticated]="isLoggedIn()"
             (deleteItem)="deleteCourse($event)"
-            (editItem)="editCourse($event)"></app-list-display>
+            (editItem)="editCourse($event)">
+          </app-list-display>
         </section>
       </section>
     </section>
