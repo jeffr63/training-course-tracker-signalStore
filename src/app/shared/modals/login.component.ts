@@ -67,6 +67,6 @@ export class LoginComponent implements OnInit {
   login(): void {
     this.user.email = this.loginForm.controls.email.value;
     this.user.password = this.loginForm.controls.password.value;
-    this.modal.close(this.user);
+     this.modal.close(this.user);
   }
 }

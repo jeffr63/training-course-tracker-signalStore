@@ -9,7 +9,8 @@ Angular, rxjs, ngrx SignalStore, ng-bootstrap, bootstrap-icons, json-server, jso
 ## JSON-SERVER
 
 1. npm install -g json-server
-2. run "npm run api" to start json-server
+2. npm install -g json-server-auth
+2. run "npm run api" to start json-server with auth
 
 ## Development server
 

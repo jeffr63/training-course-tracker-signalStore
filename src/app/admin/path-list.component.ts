@@ -8,7 +8,6 @@ import { DeleteComponent } from '@modals/delete.component';
 import { ListDisplayComponent } from '@shared/list/list-display.component';
 import { ListHeaderComponent } from '@shared/list/list-header.component';
 import { ModalDataService } from '@modals/modal-data.service';
-import { Path } from '@models/paths';
 import { PathsStore } from '@store/paths.store';
 
 @Component({
@@ -32,7 +31,8 @@ import { PathsStore } from '@store/paths.store';
             [items]="paths()"
             [isAuthenticated]="isAuthenticated"
             (deleteItem)="deletePath($event)"
-            (editItem)="editPath($event)"></app-list-display>
+            (editItem)="editPath($event)"
+          ></app-list-display>
         </section>
       </section>
     </section>
@@ -50,7 +50,6 @@ export default class PathListComponent {
   headers = ['Path'];
   isAuthenticated = true;
   paths = this.#pathsStore.paths;
-  selectPath = <Path>{};
 
   deletePath(id) {
     const modalOptions = {
