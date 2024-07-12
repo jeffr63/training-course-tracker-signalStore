@@ -17,8 +17,7 @@ import { NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
           [maxSize]="maxSize()"
           [rotate]="true"
           [(page)]="current"
-          (pageChange)="onPageChange()"
-        ></ngb-pagination>
+          (pageChange)="onPageChange()"></ngb-pagination>
       </div>
       @if (isAuthenticated) {
       <div class="col">
@@ -33,21 +32,19 @@ import { NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
   styles: [],
 })
 export class PagerListHeaderComponent {
-  @Input() current = 1;
-  isAuthenticated = input<boolean>(false);
-  maxSize = input<number>(5);
-  pageSize = input<number>(10);
-  total = input<number>(0);
-  currentChange = output<number>();
-  newCourse = output();
-  refreshTable = output();
+  readonly current = model<number>(1);
+  readonly isAuthenticated = input<boolean>(false);
+  readonly maxSize = input<number>(5);
+  readonly pageSize = input<number>(10);
+  readonly total = input<number>(0);
+  protected readonly newCourse = output();
+  protected readonly refreshTable = output();
 
-  onPageChange() {
-    this.currentChange.emit(this.current);
+  protected onPageChange() {
     this.refreshTable.emit();
   }
 
-  newClicked() {
+  protected newClicked() {
     this.newCourse.emit();
   }
 }

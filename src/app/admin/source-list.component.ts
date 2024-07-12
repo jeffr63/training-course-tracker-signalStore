@@ -52,13 +52,12 @@ export default class SourceListComponent {
   readonly #router = inject(Router);
   readonly #sourcesStore = inject(SourcesStore);
 
-  columns = ['name'];
-  headers = ['Source'];
-  isAuthenticated = true;
-  sources = this.#sourcesStore.sources;
-  selectPath = <Source>{};
+  protected readonly columns = ['name'];
+  protected readonly headers = ['Source'];
+  protected readonly isAuthenticated = true;
+  protected readonly sources = this.#sourcesStore.sources;
 
-  deleteSource(id) {
+  protected deleteSource(id) {
     const modalOptions = {
       title: 'Are you sure you want to delete this source?',
       body: 'All information associated to this source will be permanently deleted.',
@@ -70,11 +69,11 @@ export default class SourceListComponent {
     });
   }
 
-  editSource(id: number) {
+  protected editSource(id: number) {
     this.#router.navigate(['/admin/sources', id]);
   }
 
-  newSource() {
+  protected newSource() {
     this.#router.navigate(['/admin/sources/new']);
   }
 }

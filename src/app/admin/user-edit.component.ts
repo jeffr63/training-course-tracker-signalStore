@@ -56,12 +56,8 @@ import { UsersStore } from '@store/users.store';
           </fieldset>
 
           <div class="d-grid gap-2 m-2 d-sm-flex justify-content-sm-end">
-            <button class="btn btn-primary me-sm-2" (click)="save()" title="Save" [disabled]="!userEditForm.valid">
-              <i class="bi bi-save"></i> Save
-            </button>
-            <a class="btn btn-secondary" [routerLink]="['/admin/users']" title="Cancel">
-              <i class="bi bi-x-circle"></i> Cancel
-            </a>
+            <button class="btn btn-primary me-sm-2" (click)="save()" title="Save" [disabled]="!userEditForm.valid"><i class="bi bi-save"></i> Save</button>
+            <a class="btn btn-secondary" [routerLink]="['/admin/users']" title="Cancel"> <i class="bi bi-x-circle"></i> Cancel </a>
           </div>
         </form>
         }
@@ -87,8 +83,8 @@ export default class UserEditComponent implements OnInit {
   readonly #location = inject(Location);
   readonly #usersStore = inject(UsersStore);
 
-  id = input<string>();
-  userEditForm!: FormGroup;
+  protected readonly id = input<string>();
+  protected userEditForm!: FormGroup;
   #user: User;
 
   constructor() {
@@ -107,7 +103,7 @@ export default class UserEditComponent implements OnInit {
     this.#usersStore.getUser(+this.id());
   }
 
-  save() {
+  protected save() {
     const patchData = {
       email: this.userEditForm.controls.email.value,
       name: this.userEditForm.controls.name.value,
@@ -118,7 +114,7 @@ export default class UserEditComponent implements OnInit {
     this.#location.back();
   }
 
-  setUser(user: User) {
+  private setUser(user: User) {
     if (this.id() == 'new') return;
 
     this.#user = user;

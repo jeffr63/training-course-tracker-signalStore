@@ -7,27 +7,27 @@ import { Path } from '@models/paths';
   providedIn: 'root',
 })
 export class PathsService {
-  private http = inject(HttpClient);
+  readonly #http = inject(HttpClient);
 
-  private baseUrl = 'http://localhost:3000';
+  readonly #baseUrl = 'http://localhost:3000';
 
-  add(path: Path) {
-    return this.http.post(`${this.baseUrl}/paths`, path);
+  public add(path: Path) {
+    return this.#http.post(`${this.#baseUrl}/paths`, path);
   }
 
-  delete(id) {
-    return this.http.delete<Path>(`${this.baseUrl}/paths/${id}`);
+  public delete(id) {
+    return this.#http.delete<Path>(`${this.#baseUrl}/paths/${id}`);
   }
 
-  get(id) {
-    return this.http.get<Path>(`${this.baseUrl}/paths/${id}`);
+  public get(id) {
+    return this.#http.get<Path>(`${this.#baseUrl}/paths/${id}`);
   }
 
-  load() {
-    return this.http.get<Path[]>(`${this.baseUrl}/paths?_sort=name&_order=asc`);
+  public load() {
+    return this.#http.get<Path[]>(`${this.#baseUrl}/paths?_sort=name&_order=asc`);
   }
 
-  save(path: Path) {
+  public save(path: Path) {
     if (path.id) {
       return this.update(path);
     } else {
@@ -35,7 +35,7 @@ export class PathsService {
     }
   }
 
-  update(path: Path) {
-    return this.http.put(`${this.baseUrl}/paths/${path.id}`, path);
+  public update(path: Path) {
+    return this.#http.put(`${this.#baseUrl}/paths/${path.id}`, path);
   }
 }

@@ -21,7 +21,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   styles: [],
 })
 export class ListHeaderComponent {
-  newItem = output();
+  protected readonly newItem = output();
 
   newClicked() {
     this.newItem.emit();

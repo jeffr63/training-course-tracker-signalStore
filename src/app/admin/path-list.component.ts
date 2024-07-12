@@ -31,8 +31,7 @@ import { PathsStore } from '@store/paths.store';
             [items]="paths()"
             [isAuthenticated]="isAuthenticated"
             (deleteItem)="deletePath($event)"
-            (editItem)="editPath($event)"
-          ></app-list-display>
+            (editItem)="editPath($event)"></app-list-display>
         </section>
       </section>
     </section>
@@ -46,12 +45,12 @@ export default class PathListComponent {
   readonly #pathsStore = inject(PathsStore);
   readonly #router = inject(Router);
 
-  columns = ['name'];
-  headers = ['Path'];
-  isAuthenticated = true;
-  paths = this.#pathsStore.paths;
+  protected readonly columns = ['name'];
+  protected readonly headers = ['Path'];
+  protected readonly isAuthenticated = true;
+  protected readonly paths = this.#pathsStore.paths;
 
-  deletePath(id) {
+  protected deletePath(id) {
     const modalOptions = {
       title: 'Are you sure you want to delete this path?',
       body: 'All information associated to this source will be permanently deleted.',
@@ -63,11 +62,11 @@ export default class PathListComponent {
     });
   }
 
-  editPath(id: number) {
+  protected editPath(id: number) {
     this.#router.navigate(['/admin/paths', id]);
   }
 
-  newPath() {
+  protected newPath() {
     this.#router.navigate(['/admin/paths/new']);
   }
 }

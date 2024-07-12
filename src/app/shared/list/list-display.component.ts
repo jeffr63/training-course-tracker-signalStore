@@ -39,18 +39,18 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   styles: [],
 })
 export class ListDisplayComponent {
-  columns = input.required<string[]>();
-  headers = input.required<string[]>();
-  items = input.required<any[]>();
-  isAuthenticated = input.required<boolean>();
-  deleteItem = output<number>();
-  editItem = output<number>();
+  readonly columns = input.required<string[]>();
+  readonly headers = input.required<string[]>();
+  readonly items = input.required<any[]>();
+  readonly isAuthenticated = input.required<boolean>();
+  protected readonly deleteItem = output<number>();
+  protected readonly editItem = output<number>();
 
-  editClicked(id: number) {
+  protected editClicked(id: number) {
     this.editItem.emit(id);
   }
 
-  deleteClicked(id: number) {
+  protected deleteClicked(id: number) {
     this.deleteItem.emit(id);
   }
 }

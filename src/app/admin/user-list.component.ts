@@ -48,12 +48,12 @@ export default class UserListComponent {
   readonly #router = inject(Router);
   readonly #usersStore = inject(UsersStore);
 
-  columns = ['name', 'email', 'role'];
-  headers = ['Name', 'Email', 'Role'];
-  isAuthenticated = true;
-  users = this.#usersStore.users;
+  protected readonly columns = ['name', 'email', 'role'];
+  protected readonly headers = ['Name', 'Email', 'Role'];
+  protected readonly isAuthenticated = true;
+  protected readonly users = this.#usersStore.users;
 
-  deleteUser(id) {
+  protected deleteUser(id) {
     const modalOptions = {
       title: 'Are you sure you want to delete this user?',
       body: 'All information associated to this source will be permanently deleted.',
@@ -65,7 +65,7 @@ export default class UserListComponent {
     });
   }
 
-  editUser(id: number) {
+  protected editUser(id: number) {
     this.#router.navigate(['/admin/users', id]);
   }
 }

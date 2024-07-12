@@ -36,13 +36,7 @@ import { PagerListHeaderComponent } from '@shared/list/pager-list-header.compone
             (newCourse)="newCourse()">
           </app-pager-list-header>
 
-          <app-list-display
-            [headers]="headers"
-            [columns]="columns"
-            [items]="courses()"
-            [isAuthenticated]="isLoggedIn()"
-            (deleteItem)="deleteCourse($event)"
-            (editItem)="editCourse($event)">
+          <app-list-display [headers]="headers" [columns]="columns" [items]="courses()" [isAuthenticated]="isLoggedIn()" (deleteItem)="deleteCourse($event)" (editItem)="editCourse($event)">
           </app-list-display>
         </section>
       </section>
@@ -52,29 +46,28 @@ import { PagerListHeaderComponent } from '@shared/list/pager-list-header.compone
   styles: [],
 })
 export default class CourseListComponent implements OnInit {
-  public authService = inject(AuthService);
+  readonly #authService = inject(AuthService);
   readonly #coursesStore = inject(CoursesStore);
   readonly #modal = inject(NgbModal);
   readonly #modalDataService = inject(ModalDataService);
   readonly #router = inject(Router);
 
-  courses = this.#coursesStore.currentPage;
-  selectCourse = signal<Course>({} as Course);
-  current = 1;
-  loading = signal(false);
-  pageSize = 10;
-  totalCourses = this.#coursesStore.totalCourses;
-  closedResult = '';
-  columns = ['title', 'instructor', 'path', 'source'];
-  headers = ['Title', 'Instructor', 'Path', 'Source'];
-
-  isLoggedIn = this.authService.isLoggedIn;
+  protected readonly closedResult = '';
+  protected readonly columns = ['title', 'instructor', 'path', 'source'];
+  protected readonly courses = this.#coursesStore.currentPage;
+  protected readonly current = 1;
+  protected readonly headers = ['Title', 'Instructor', 'Path', 'Source'];
+  protected readonly isLoggedIn = this.#authService.isLoggedIn;
+  protected readonly loading = signal(false);
+  protected readonly pageSize = 10;
+  protected readonly selectCourse = signal<Course>({} as Course);
+  protected readonly totalCourses = this.#coursesStore.totalCourses;
 
   ngOnInit() {
     this.#coursesStore.loadCourses({ current: this.current, pageSize: this.pageSize });
   }
 
-  deleteCourse(id) {
+  protected deleteCourse(id) {
     const modalOptions = {
       title: 'Are you sure you want to delete this course?',
       body: 'All information associated to this source will be permanently deleted.',
@@ -90,15 +83,15 @@ export default class CourseListComponent implements OnInit {
     });
   }
 
-  editCourse(id) {
+  protected editCourse(id) {
     this.#router.navigate(['/courses', id]);
   }
 
-  newCourse() {
+  protected newCourse() {
     this.#router.navigate(['/courses/new']);
   }
 
-  refreshTable() {
+  protected refreshTable() {
     this.#coursesStore.loadCourses({ current: this.current, pageSize: this.pageSize });
   }
 }

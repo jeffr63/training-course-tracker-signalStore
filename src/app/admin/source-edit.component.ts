@@ -29,12 +29,8 @@ import { SourcesStore } from '@store/sources.store';
           </fieldset>
 
           <div class="d-grid gap-2 m-2 d-sm-flex justify-content-sm-end">
-            <button class="btn btn-primary me-sm-2" (click)="save()" title="Save" [disabled]="!sourceEditForm.valid">
-              <i class="bi bi-save"></i> Save
-            </button>
-            <a class="btn btn-secondary" [routerLink]="['/admin/sources']" title="Cancel">
-              <i class="bi bi-x-circle"></i> Cancel
-            </a>
+            <button class="btn btn-primary me-sm-2" (click)="save()" title="Save" [disabled]="!sourceEditForm.valid"><i class="bi bi-save"></i> Save</button>
+            <a class="btn btn-secondary" [routerLink]="['/admin/sources']" title="Cancel"> <i class="bi bi-x-circle"></i> Cancel </a>
           </div>
         </form>
         }
@@ -60,8 +56,8 @@ export default class SourceEditComponent implements OnInit {
   readonly #location = inject(Location);
   readonly #sourcesStore = inject(SourcesStore);
 
-  id = input<string>();
-  sourceEditForm: FormGroup;
+  protected readonly id = input<string>();
+  protected sourceEditForm: FormGroup;
   #source: Source;
 
   constructor() {
@@ -78,13 +74,13 @@ export default class SourceEditComponent implements OnInit {
     this.#sourcesStore.getSource(+this.id());
   }
 
-  save() {
+  protected save() {
     this.#source.name = this.sourceEditForm.controls.name.value;
     this.#sourcesStore.saveSource({ source: this.#source });
     this.#location.back();
   }
 
-  setSource(source: Source) {
+  private setSource(source: Source) {
     if (this.id() == 'new') return;
 
     this.#source = source;

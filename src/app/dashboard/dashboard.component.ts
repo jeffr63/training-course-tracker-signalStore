@@ -17,26 +17,14 @@ import { CoursesStore } from '@store/course.store';
           <div class="card col-xm-12 col-sm-6">
             <div class="card-body">
               <h4 class="card-title">Completed Courses - Paths</h4>
-              <ngx-charts-pie-chart
-                [view]="[400, 400]"
-                [results]="courses()"
-                [labels]="true"
-                [doughnut]="true"
-                [arcWidth]="0.5">
-              </ngx-charts-pie-chart>
+              <ngx-charts-pie-chart [view]="[400, 400]" [results]="courses()" [labels]="true" [doughnut]="true" [arcWidth]="0.5"> </ngx-charts-pie-chart>
             </div>
           </div>
 
           <div class="card col-xm-12 col-sm-6">
             <div class="card-body">
               <h4 class="card-title">Completed Courses - Sources</h4>
-              <ngx-charts-pie-chart
-                [view]="[400, 400]"
-                [results]="sources()"
-                [labels]="true"
-                [doughnut]="true"
-                [arcWidth]="0.5">
-              </ngx-charts-pie-chart>
+              <ngx-charts-pie-chart [view]="[400, 400]" [results]="sources()" [labels]="true" [doughnut]="true" [arcWidth]="0.5"> </ngx-charts-pie-chart>
             </div>
           </div>
         </div>
@@ -49,6 +37,6 @@ import { CoursesStore } from '@store/course.store';
 export class DashboardComponent {
   readonly #courseStore = inject(CoursesStore);
 
-  courses = this.#courseStore.coursesByPath;
-  sources = this.#courseStore.coursesBySource;
+  protected readonly courses = this.#courseStore.coursesByPath;
+  protected readonly sources = this.#courseStore.coursesBySource;
 }

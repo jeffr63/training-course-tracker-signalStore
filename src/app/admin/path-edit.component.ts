@@ -29,12 +29,8 @@ import { PathsStore } from '@store/paths.store';
           </fieldset>
 
           <div class="d-grid gap-2 m-2 d-sm-flex justify-content-sm-end">
-            <button class="btn btn-primary me-sm-2" (click)="save()" title="Save" [disabled]="!pathEditForm.valid">
-              <i class="bi bi-save"></i> Save
-            </button>
-            <a class="btn btn-secondary" [routerLink]="['/admin/paths']" title="Cancel">
-              <i class="bi bi-x-circle"></i> Cancel
-            </a>
+            <button class="btn btn-primary me-sm-2" (click)="save()" title="Save" [disabled]="!pathEditForm.valid"><i class="bi bi-save"></i> Save</button>
+            <a class="btn btn-secondary" [routerLink]="['/admin/paths']" title="Cancel"> <i class="bi bi-x-circle"></i> Cancel </a>
           </div>
         </form>
         }
@@ -60,8 +56,8 @@ export default class PathEditComponent implements OnInit {
   readonly #location = inject(Location);
   readonly #pathsStore = inject(PathsStore);
 
-  id = input<string>();
-  pathEditForm!: FormGroup;
+  protected readonly id = input<string>();
+  protected pathEditForm!: FormGroup;
   #path: Path;
 
   constructor() {
@@ -77,13 +73,13 @@ export default class PathEditComponent implements OnInit {
 
     this.#pathsStore.getPath(+this.id());
   }
-  save() {
+  protected save() {
     this.#path.name = this.pathEditForm.controls.name.value;
     this.#pathsStore.savePath({ path: this.#path });
     this.#location.back();
   }
 
-  setPath(path: Path) {
+  private setPath(path: Path) {
     if (this.id() == 'new') return;
     this.#path = path;
     this.pathEditForm.get('name').setValue(path.name);

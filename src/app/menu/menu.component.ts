@@ -52,15 +52,15 @@ import { LoginComponent } from '@modals/login.component';
   ],
 })
 export class MenuComponent {
-  #auth = inject(AuthService);
-  #modalService = inject(NgbModal);
-  #router = inject(Router);
+  readonly #auth = inject(AuthService);
+  readonly #modalService = inject(NgbModal);
+  readonly #router = inject(Router);
 
-  isNavbarCollapsed = signal(false);
-  isLoggedIn = this.#auth.isLoggedIn;
-  isAdmin = this.#auth.isLoggedInAsAdmin;
+  protected readonly isNavbarCollapsed = signal(false);
+  protected readonly isLoggedIn = this.#auth.isLoggedIn;
+  protected readonly isAdmin = this.#auth.isLoggedInAsAdmin;
 
-  open() {
+  protected open() {
     this.#modalService.open(LoginComponent, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
       if (result) {
         this.#auth.login(result.email, result.password).subscribe();
@@ -68,12 +68,12 @@ export class MenuComponent {
     });
   }
 
-  logout() {
+  protected logout() {
     this.#auth.logout();
     this.#router.navigate(['/']);
   }
 
-  toggleNavigation(): void {
+  protected toggleNavigation(): void {
     this.isNavbarCollapsed.set(!this.isNavbarCollapsed());
   }
 }

@@ -24,12 +24,7 @@ import { SourcesStore } from '@store/sources.store';
           <fieldset class="m-2 row">
             <label class="col-form-label col-sm-2" for="title">Title</label>
             <div class="col-sm-6">
-              <input
-                id="title"
-                type="text"
-                class="form-control"
-                formControlName="title"
-                placeholder="Enter title of course taken" />
+              <input id="title" type="text" class="form-control" formControlName="title" placeholder="Enter title of course taken" />
               @if (courseEditForm.controls.title.errors?.required && courseEditForm.controls.title.touched) {
               <small class="text-danger">Title is required</small>
               }
@@ -39,12 +34,7 @@ import { SourcesStore } from '@store/sources.store';
           <fieldset class="m-2 row">
             <label class="col-form-label col-sm-2" for="instructor">Instructor</label>
             <div class="col-sm-6">
-              <input
-                id="instructor"
-                type="text"
-                class="form-control"
-                formControlName="instructor"
-                placeholder="Enter name of course's intructor" />
+              <input id="instructor" type="text" class="form-control" formControlName="instructor" placeholder="Enter name of course's intructor" />
               @if (courseEditForm.controls.instructor.errors?.required && courseEditForm.controls.instructor.touched) {
               <small class="text-danger">Instructor is required</small>
               }
@@ -54,13 +44,7 @@ import { SourcesStore } from '@store/sources.store';
           <fieldset class="m-2 row">
             <label class="col-form-label col-sm-2" for="path">Path</label>
             <div class="col-sm-6">
-              <input
-                id="path"
-                type="text"
-                class="form-control"
-                formControlName="path"
-                list="path-helpers"
-                placeholder="Enter techical path of course (ex: Angular or React)" />
+              <input id="path" type="text" class="form-control" formControlName="path" list="path-helpers" placeholder="Enter techical path of course (ex: Angular or React)" />
               <datalist id="path-helpers">
                 @for (path of paths(); track path.id) {
                 <option value="{{ path.name }}"></option>
@@ -75,13 +59,7 @@ import { SourcesStore } from '@store/sources.store';
           <fieldset class="m-2 row">
             <label class="col-form-label col-sm-2" for="source">Source</label>
             <div class="col-sm-6">
-              <input
-                id="source"
-                type="text"
-                class="form-control"
-                formControlName="source"
-                list="source-helpers"
-                placeholder="Enter where the course was sourced from (ex: Pluralsite)" />
+              <input id="source" type="text" class="form-control" formControlName="source" list="source-helpers" placeholder="Enter where the course was sourced from (ex: Pluralsite)" />
               <datalist id="source-helpers">
                 @for (source of sources(); track source.id) {
                 <option value="{{ source.name }}"></option>
@@ -94,9 +72,7 @@ import { SourcesStore } from '@store/sources.store';
           </fieldset>
 
           <div class="d-grid gap-2 m-2 d-sm-flex justify-content-sm-end">
-            <button class="btn btn-primary me-sm-2" (click)="save()" title="Save" [disabled]="!courseEditForm.valid">
-              <i class="bi bi-save"></i> Save
-            </button>
+            <button class="btn btn-primary me-sm-2" (click)="save()" title="Save" [disabled]="!courseEditForm.valid"><i class="bi bi-save"></i> Save</button>
             <a class="btn btn-secondary" [routerLink]="['/courses']"> <i class="bi bi-x-circle"></i> Cancel </a>
           </div>
         </form>
@@ -127,10 +103,10 @@ export default class CourseEditComponent implements OnInit {
   readonly #sourcesStore = inject(SourcesStore);
 
   #course: Course;
-  courseEditForm: FormGroup;
-  id = input<string>();
-  paths = this.#pathsStore.paths;
-  sources = this.#sourcesStore.sources;
+  protected courseEditForm: FormGroup;
+  protected readonly id = input<string>();
+  protected readonly paths = this.#pathsStore.paths;
+  protected readonly sources = this.#sourcesStore.sources;
 
   constructor() {
     effect(() => this.setCourse(this.#coursesStore.currentCourse()));
@@ -149,7 +125,7 @@ export default class CourseEditComponent implements OnInit {
     this.#coursesStore.getCourse(+this.id());
   }
 
-  save() {
+  protected save() {
     this.#course.title = this.courseEditForm.controls.title.value;
     this.#course.instructor = this.courseEditForm.controls.instructor.value;
     this.#course.path = this.courseEditForm.controls.path.value;
@@ -158,7 +134,7 @@ export default class CourseEditComponent implements OnInit {
     this.#location.back();
   }
 
-  setCourse(course: Course) {
+  private setCourse(course: Course) {
     if (this.id() == 'new') return;
     this.#course = course;
     this.courseEditForm.get('title').setValue(course.title);
