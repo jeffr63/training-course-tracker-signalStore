@@ -9,11 +9,9 @@ import { User } from '@models/user';
 import { UsersStore } from '@store/users.store';
 
 @Component({
-  selector: 'app-user-edit',
-  standalone: true,
-  imports: [NgbModule, ReactiveFormsModule, RouterLink],
-
-  template: `
+    selector: 'app-user-edit',
+    imports: [NgbModule, ReactiveFormsModule, RouterLink],
+    template: `
     <section class="container">
       <section class="card">
         @if (userEditForm) {
@@ -64,9 +62,8 @@ import { UsersStore } from '@store/users.store';
       </section>
     </section>
   `,
-
-  styles: [
-    `
+    styles: [
+        `
       section .card {
         margin-top: 30px;
         padding-left: 15px;
@@ -76,7 +73,7 @@ import { UsersStore } from '@store/users.store';
         margin-left: 3px;
       }
     `,
-  ],
+    ]
 })
 export default class UserEditComponent implements OnInit {
   readonly #fb = inject(FormBuilder);

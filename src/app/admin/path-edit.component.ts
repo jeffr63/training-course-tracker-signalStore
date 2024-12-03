@@ -9,11 +9,9 @@ import { Path } from '@models/paths';
 import { PathsStore } from '@store/paths.store';
 
 @Component({
-  selector: 'app-path-edit',
-  standalone: true,
-  imports: [NgbModule, ReactiveFormsModule, RouterLink],
-
-  template: `
+    selector: 'app-path-edit',
+    imports: [NgbModule, ReactiveFormsModule, RouterLink],
+    template: `
     <section class="container">
       <section class="card">
         @if (pathEditForm) {
@@ -37,9 +35,8 @@ import { PathsStore } from '@store/paths.store';
       </section>
     </section>
   `,
-
-  styles: [
-    `
+    styles: [
+        `
       section .card {
         margin-top: 30px;
         padding-left: 15px;
@@ -49,7 +46,7 @@ import { PathsStore } from '@store/paths.store';
         margin-left: 3px;
       }
     `,
-  ],
+    ]
 })
 export default class PathEditComponent implements OnInit {
   readonly #fb = inject(FormBuilder);

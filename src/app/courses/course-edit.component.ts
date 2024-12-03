@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy, effect, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AsyncPipe, Location } from '@angular/common';
+import { Location } from '@angular/common';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -11,12 +11,10 @@ import { PathsStore } from '@store/paths.store';
 import { SourcesStore } from '@store/sources.store';
 
 @Component({
-  selector: 'app-course-edit',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, NgbModule, ReactiveFormsModule, RouterLink],
-
-  template: `
+    selector: 'app-course-edit',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [NgbModule, ReactiveFormsModule, RouterLink],
+    template: `
     <section class="container">
       <section class="card">
         @if (courseEditForm) {
@@ -80,9 +78,8 @@ import { SourcesStore } from '@store/sources.store';
       </section>
     </section>
   `,
-
-  styles: [
-    `
+    styles: [
+        `
       section .card {
         margin-top: 30px;
         padding-left: 15px;
@@ -93,7 +90,7 @@ import { SourcesStore } from '@store/sources.store';
         margin-left: 3px;
       }
     `,
-  ],
+    ]
 })
 export default class CourseEditComponent implements OnInit {
   readonly #coursesStore = inject(CoursesStore);

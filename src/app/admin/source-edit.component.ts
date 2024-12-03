@@ -9,11 +9,9 @@ import { Source } from '@models/sources';
 import { SourcesStore } from '@store/sources.store';
 
 @Component({
-  selector: 'app-source-edit',
-  standalone: true,
-  imports: [NgbModule, ReactiveFormsModule, RouterLink],
-
-  template: `
+    selector: 'app-source-edit',
+    imports: [NgbModule, ReactiveFormsModule, RouterLink],
+    template: `
     <section class="container">
       <section class="card">
         @if (sourceEditForm) {
@@ -37,9 +35,8 @@ import { SourcesStore } from '@store/sources.store';
       </section>
     </section>
   `,
-
-  styles: [
-    `
+    styles: [
+        `
       section .card {
         margin-top: 30px;
         padding-left: 15px;
@@ -49,7 +46,7 @@ import { SourcesStore } from '@store/sources.store';
         margin-left: 3px;
       }
     `,
-  ],
+    ]
 })
 export default class SourceEditComponent implements OnInit {
   readonly #fb = inject(FormBuilder);

@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -12,11 +11,9 @@ import { Source } from '@models/sources';
 import { SourcesStore } from '@store/sources.store';
 
 @Component({
-  selector: 'app-source-list',
-  standalone: true,
-  imports: [AsyncPipe, NgbModule, ListDisplayComponent, ListHeaderComponent],
-
-  template: `
+    selector: 'app-source-list',
+    imports: [NgbModule, ListDisplayComponent, ListHeaderComponent],
+    template: `
     <section>
       <section class="card">
         <header>
@@ -37,14 +34,13 @@ import { SourcesStore } from '@store/sources.store';
       </section>
     </section>
   `,
-
-  styles: [
-    `
+    styles: [
+        `
       header {
         padding-bottom: 10px;
       }
     `,
-  ],
+    ]
 })
 export default class SourceListComponent {
   readonly #modal = inject(NgbModal);

@@ -4,11 +4,9 @@ import { RouterLink } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-admin',
-  standalone: true,
-  imports: [NgbModule, RouterLink],
-
-  template: `
+    selector: 'app-admin',
+    imports: [NgbModule, RouterLink],
+    template: `
     <section>
       <div class="p-2 m-3 mb-4 border bg-light rounded-3">
         <div class="container-fluid py-3">
@@ -49,7 +47,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
       </div>
     </section>
   `,
-
-  styles: ['.jumbotron { padding: 10px; }'],
+    styles: ['.jumbotron { padding: 10px; }']
 })
 export default class AdminComponent {}

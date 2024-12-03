@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -10,11 +9,9 @@ import { ModalDataService } from '@modals/modal-data.service';
 import { UsersStore } from '@store/users.store';
 
 @Component({
-  selector: 'app-users-list',
-  standalone: true,
-  imports: [AsyncPipe, NgbModule, ListDisplayComponent],
-
-  template: `
+    selector: 'app-users-list',
+    imports: [NgbModule, ListDisplayComponent],
+    template: `
     <section>
       <section class="card">
         <header>
@@ -33,14 +30,13 @@ import { UsersStore } from '@store/users.store';
       </section>
     </section>
   `,
-
-  styles: [
-    `
+    styles: [
+        `
       header {
         padding-bottom: 10px;
       }
     `,
-  ],
+    ]
 })
 export default class UserListComponent {
   readonly #modal = inject(NgbModal);

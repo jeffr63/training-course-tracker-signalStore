@@ -6,11 +6,9 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { CoursesStore } from '@store/course.store';
 
 @Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [NgbModule, NgxChartsModule],
-
-  template: `
+    selector: 'app-dashboard',
+    imports: [NgbModule, NgxChartsModule],
+    template: `
     <section>
       <div class="container-fluid">
         <div class="row first-row">
@@ -31,8 +29,7 @@ import { CoursesStore } from '@store/course.store';
       </div>
     </section>
   `,
-
-  styles: [],
+    styles: []
 })
 export class DashboardComponent {
   readonly #courseStore = inject(CoursesStore);

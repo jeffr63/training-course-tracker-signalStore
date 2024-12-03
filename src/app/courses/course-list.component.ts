@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -13,11 +12,9 @@ import { ModalDataService } from '@modals/modal-data.service';
 import { PagerListHeaderComponent } from '@shared/list/pager-list-header.component';
 
 @Component({
-  selector: 'app-course-list',
-  standalone: true,
-  imports: [AsyncPipe, NgbModule, PagerListHeaderComponent, ListDisplayComponent],
-
-  template: `
+    selector: 'app-course-list',
+    imports: [NgbModule, PagerListHeaderComponent, ListDisplayComponent],
+    template: `
     <section>
       <section class="card">
         <header>
@@ -42,8 +39,7 @@ import { PagerListHeaderComponent } from '@shared/list/pager-list-header.compone
       </section>
     </section>
   `,
-
-  styles: [],
+    styles: []
 })
 export default class CourseListComponent implements OnInit {
   readonly #authService = inject(AuthService);
