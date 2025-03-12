@@ -6,7 +6,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { concatMap, pipe, switchMap } from 'rxjs';
 
 import { Path } from '@models/paths';
-import { PathsService } from '@shared/services/paths.service';
+import { PathsService } from '@services/path/paths.service';
 
 export interface State {
   paths: Path[];

@@ -6,7 +6,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { concatMap, pipe, switchMap } from 'rxjs';
 
 import { Source } from '@models/sources';
-import { SourcesService } from '@shared/services/sources.service';
+import { SourcesService } from '@services/source/sources.service';
 
 export interface State {
   sources: Source[];

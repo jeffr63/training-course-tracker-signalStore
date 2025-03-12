@@ -8,7 +8,7 @@ import { concatMap, debounceTime, distinctUntilChanged, pipe, switchMap, tap } f
 import { chain, orderBy, reduce } from 'lodash';
 
 import { Course, CourseData } from '@models/course';
-import { CoursesService } from '@shared/services/courses.service';
+import { CoursesService } from '@services/course/courses.service';
 
 export interface State {
   courses: Course[];

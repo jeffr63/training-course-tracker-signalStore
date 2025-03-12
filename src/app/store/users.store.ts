@@ -6,7 +6,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { concatMap, pipe, switchMap } from 'rxjs';
 
 import { User } from '@models/user';
-import { UsersService } from '@shared/services/user.service';
+import { UsersService } from '@services/user/user.service';
 
 export interface State {
   users: User[];

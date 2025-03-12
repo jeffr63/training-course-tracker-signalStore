@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
-import { PathsService } from '@services/paths.service';
+import { PathsService } from '@services/path/paths.service';
 import { Path } from '@models/paths';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
@@ -13,9 +13,9 @@ describe('PathsService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [],
-    providers: [PathsService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-});
+      imports: [],
+      providers: [PathsService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
+    });
 
     httpTestingController = TestBed.inject(HttpTestingController);
     service = TestBed.inject(PathsService);

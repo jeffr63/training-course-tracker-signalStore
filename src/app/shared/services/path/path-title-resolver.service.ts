@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 
 import { map } from 'rxjs';
 
-import { PathsService } from '@services/paths.service';
+import { PathsService } from '@services/path/paths.service';
 
 export const pathNameResolver: ResolveFn<string> = (route: ActivatedRouteSnapshot) => {
   const id = route.paramMap.get('id');
