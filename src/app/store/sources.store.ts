@@ -26,18 +26,6 @@ export const SourcesStore = signalStore(
   withMethods((store) => {
     const sourcesService = inject(SourcesService);
     return {
-      deleteSource: rxMethod<{ id: number }>(
-        pipe(
-          concatMap(({ id }) => {
-            return sourcesService.delete(id).pipe(
-              tapResponse({
-                next: () => {},
-                error: (error: string) => patchState(store, { error }),
-              })
-            );
-          })
-        )
-      ),
       getSource: rxMethod<number>(
         pipe(
           switchMap((id) => {
@@ -68,6 +56,18 @@ export const SourcesStore = signalStore(
   withMethods((store) => {
     const sourcesService = inject(SourcesService);
     return {
+      deleteSource: rxMethod<{ id: number }>(
+        pipe(
+          concatMap((id) => {
+            return sourcesService.delete(id).pipe(
+              tapResponse({
+                next: () => store.loadSources(),
+                error: (error: string) => patchState(store, { error }),
+              })
+            );
+          })
+        )
+      ),
       saveSource: rxMethod<{ source: Source }>(
         pipe(
           concatMap(({ source }) => {
