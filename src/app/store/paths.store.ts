@@ -26,18 +26,6 @@ export const PathsStore = signalStore(
   withMethods((store) => {
     const pathsService = inject(PathsService);
     return {
-      deletePath: rxMethod<{ id: number }>(
-        pipe(
-          concatMap(({ id }) => {
-            return pathsService.delete(id).pipe(
-              tapResponse({
-                next: () => {},
-                error: (error: string) => patchState(store, { error }),
-              })
-            );
-          })
-        )
-      ),
       getPath: rxMethod<number>(
         pipe(
           switchMap((id) => {
@@ -68,6 +56,18 @@ export const PathsStore = signalStore(
   withMethods((store) => {
     const pathsService = inject(PathsService);
     return {
+      deletePath: rxMethod<{ id: number }>(
+        pipe(
+          concatMap((id) => {
+            return pathsService.delete(id).pipe(
+              tapResponse({
+                next: () => store.loadPaths(),
+                error: (error: string) => patchState(store, { error }),
+              })
+            );
+          })
+        )
+      ),
       savePath: rxMethod<{ path: Path }>(
         pipe(
           concatMap(({ path }) => {

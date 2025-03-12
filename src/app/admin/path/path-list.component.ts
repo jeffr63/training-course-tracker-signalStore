@@ -10,9 +10,9 @@ import { ModalDataService } from '@modals/modal-data.service';
 import { PathsStore } from '@store/paths.store';
 
 @Component({
-    selector: 'app-path-list',
-    imports: [NgbModule, ListDisplayComponent, ListHeaderComponent],
-    template: `
+  selector: 'app-path-list',
+  imports: [NgbModule, ListDisplayComponent, ListHeaderComponent],
+  template: `
     <section>
       <section class="card">
         <header>
@@ -33,7 +33,7 @@ import { PathsStore } from '@store/paths.store';
       </section>
     </section>
   `,
-    styles: ['header { padding-bottom: 10px; }']
+  styles: ['header { padding-bottom: 10px; }'],
 })
 export default class PathListComponent {
   readonly #modal = inject(NgbModal);
