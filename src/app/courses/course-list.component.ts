@@ -7,9 +7,9 @@ import { AuthService } from '@services/auth/auth.service';
 import { Course } from '@models/course';
 import { CoursesStore } from '@store/course.store';
 import { DeleteComponent } from '@modals/delete.component';
-import { ListDisplayComponent } from '@shared/list/list-display.component';
+import { ListDisplayComponent } from '@shared/components/list-display.component';
 import { ModalDataService } from '@modals/modal-data.service';
-import { PagerListHeaderComponent } from '@shared/list/pager-list-header.component';
+import { PagerListHeaderComponent } from '@shared/components/pager-list-header.component';
 
 @Component({
   selector: 'app-course-list',

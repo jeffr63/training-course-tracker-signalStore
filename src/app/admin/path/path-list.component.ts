@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { DeleteComponent } from '@modals/delete.component';
-import { ListDisplayComponent } from '@shared/list/list-display.component';
-import { ListHeaderComponent } from '@shared/list/list-header.component';
+import { ListDisplayComponent } from '@shared/components/list-display.component';
+import { ListHeaderComponent } from '@shared/components/list-header.component';
 import { ModalDataService } from '@modals/modal-data.service';
 import { PathsStore } from '@store/paths.store';
 
