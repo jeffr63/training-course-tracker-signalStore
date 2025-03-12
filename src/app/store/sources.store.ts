@@ -56,7 +56,7 @@ export const SourcesStore = signalStore(
   withMethods((store) => {
     const sourcesService = inject(SourcesService);
     return {
-      deleteSource: rxMethod<{ id: number }>(
+      deleteSource: rxMethod<number>(
         pipe(
           concatMap((id) => {
             return sourcesService.delete(id).pipe(

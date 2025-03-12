@@ -56,7 +56,7 @@ export const PathsStore = signalStore(
   withMethods((store) => {
     const pathsService = inject(PathsService);
     return {
-      deletePath: rxMethod<{ id: number }>(
+      deletePath: rxMethod<number>(
         pipe(
           concatMap((id) => {
             return pathsService.delete(id).pipe(

@@ -26,18 +26,6 @@ export const UsersStore = signalStore(
   withMethods((store) => {
     const usersService = inject(UsersService);
     return {
-      deleteUser: rxMethod<{ id: number }>(
-        pipe(
-          concatMap(({ id }) => {
-            return usersService.delete(id).pipe(
-              tapResponse({
-                next: () => {},
-                error: (error: string) => patchState(store, { error }),
-              })
-            );
-          })
-        )
-      ),
       getUser: rxMethod<number>(
         pipe(
           switchMap((id) => {
@@ -68,6 +56,18 @@ export const UsersStore = signalStore(
   withMethods((store) => {
     const usersService = inject(UsersService);
     return {
+      deleteUser: rxMethod<number>(
+        pipe(
+          concatMap((id) => {
+            return usersService.delete(id).pipe(
+              tapResponse({
+                next: () => store.loadUsers(),
+                error: (error: string) => patchState(store, { error }),
+              })
+            );
+          })
+        )
+      ),
       patchUser: rxMethod<{ id: number; user: any }>(
         pipe(
           concatMap(({ id, user }) => {
