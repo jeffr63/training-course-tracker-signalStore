@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 
 import { map } from 'rxjs';
 
-import { SourcesService } from '@services/sources.service';
+import { SourcesService } from '@services/source/sources.service';
 
 export const sourceNameResolver: ResolveFn<string> = (route: ActivatedRouteSnapshot) => {
   const id = route.paramMap.get('id');

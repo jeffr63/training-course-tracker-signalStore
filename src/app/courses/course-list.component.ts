@@ -3,18 +3,18 @@ import { Router } from '@angular/router';
 
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { AuthService } from '@services/auth.service';
+import { AuthService } from '@services/auth/auth.service';
 import { Course } from '@models/course';
 import { CoursesStore } from '@store/course.store';
 import { DeleteComponent } from '@modals/delete.component';
-import { ListDisplayComponent } from '@shared/list/list-display.component';
+import { ListDisplayComponent } from '@shared/components/list-display.component';
 import { ModalDataService } from '@modals/modal-data.service';
-import { PagerListHeaderComponent } from '@shared/list/pager-list-header.component';
+import { PagerListHeaderComponent } from '@shared/components/pager-list-header.component';
 
 @Component({
-    selector: 'app-course-list',
-    imports: [NgbModule, PagerListHeaderComponent, ListDisplayComponent],
-    template: `
+  selector: 'app-course-list',
+  imports: [NgbModule, PagerListHeaderComponent, ListDisplayComponent],
+  template: `
     <section>
       <section class="card">
         <header>
@@ -33,13 +33,19 @@ import { PagerListHeaderComponent } from '@shared/list/pager-list-header.compone
             (newCourse)="newCourse()">
           </app-pager-list-header>
 
-          <app-list-display [headers]="headers" [columns]="columns" [items]="courses()" [isAuthenticated]="isLoggedIn()" (deleteItem)="deleteCourse($event)" (editItem)="editCourse($event)">
+          <app-list-display
+            [headers]="headers"
+            [columns]="columns"
+            [items]="courses()"
+            [isAuthenticated]="isLoggedIn()"
+            (deleteItem)="deleteCourse($event)"
+            (editItem)="editCourse($event)">
           </app-list-display>
         </section>
       </section>
     </section>
   `,
-    styles: []
+  styles: [],
 })
 export default class CourseListComponent implements OnInit {
   readonly #authService = inject(AuthService);

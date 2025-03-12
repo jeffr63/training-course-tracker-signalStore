@@ -4,14 +4,14 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { DeleteComponent } from '@modals/delete.component';
-import { ListDisplayComponent } from '@shared/list/list-display.component';
+import { ListDisplayComponent } from '@shared/components/list-display.component';
 import { ModalDataService } from '@modals/modal-data.service';
 import { UsersStore } from '@store/users.store';
 
 @Component({
-    selector: 'app-users-list',
-    imports: [NgbModule, ListDisplayComponent],
-    template: `
+  selector: 'app-users-list',
+  imports: [NgbModule, ListDisplayComponent],
+  template: `
     <section>
       <section class="card">
         <header>
@@ -30,13 +30,13 @@ import { UsersStore } from '@store/users.store';
       </section>
     </section>
   `,
-    styles: [
-        `
+  styles: [
+    `
       header {
         padding-bottom: 10px;
       }
     `,
-    ]
+  ],
 })
 export default class UserListComponent {
   readonly #modal = inject(NgbModal);

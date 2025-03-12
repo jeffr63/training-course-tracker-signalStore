@@ -6,7 +6,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { concatMap, pipe, switchMap } from 'rxjs';
 
 import { Source } from '@models/sources';
-import { SourcesService } from '@shared/services/sources.service';
+import { SourcesService } from '@services/source/sources.service';
 
 export interface State {
   sources: Source[];
@@ -26,18 +26,6 @@ export const SourcesStore = signalStore(
   withMethods((store) => {
     const sourcesService = inject(SourcesService);
     return {
-      deleteSource: rxMethod<{ id: number }>(
-        pipe(
-          concatMap(({ id }) => {
-            return sourcesService.delete(id).pipe(
-              tapResponse({
-                next: () => {},
-                error: (error: string) => patchState(store, { error }),
-              })
-            );
-          })
-        )
-      ),
       getSource: rxMethod<number>(
         pipe(
           switchMap((id) => {
@@ -68,6 +56,18 @@ export const SourcesStore = signalStore(
   withMethods((store) => {
     const sourcesService = inject(SourcesService);
     return {
+      deleteSource: rxMethod<number>(
+        pipe(
+          concatMap((id) => {
+            return sourcesService.delete(id).pipe(
+              tapResponse({
+                next: () => store.loadSources(),
+                error: (error: string) => patchState(store, { error }),
+              })
+            );
+          })
+        )
+      ),
       saveSource: rxMethod<{ source: Source }>(
         pipe(
           concatMap(({ source }) => {

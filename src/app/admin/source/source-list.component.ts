@@ -4,16 +4,16 @@ import { Router } from '@angular/router';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { DeleteComponent } from '@modals/delete.component';
-import { ListDisplayComponent } from '@shared/list/list-display.component';
-import { ListHeaderComponent } from '@shared/list/list-header.component';
+import { ListDisplayComponent } from '@shared/components/list-display.component';
+import { ListHeaderComponent } from '@shared/components/list-header.component';
 import { ModalDataService } from '@modals/modal-data.service';
 import { Source } from '@models/sources';
 import { SourcesStore } from '@store/sources.store';
 
 @Component({
-    selector: 'app-source-list',
-    imports: [NgbModule, ListDisplayComponent, ListHeaderComponent],
-    template: `
+  selector: 'app-source-list',
+  imports: [NgbModule, ListDisplayComponent, ListHeaderComponent],
+  template: `
     <section>
       <section class="card">
         <header>
@@ -34,13 +34,13 @@ import { SourcesStore } from '@store/sources.store';
       </section>
     </section>
   `,
-    styles: [
-        `
+  styles: [
+    `
       header {
         padding-bottom: 10px;
       }
     `,
-    ]
+  ],
 })
 export default class SourceListComponent {
   readonly #modal = inject(NgbModal);

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
-import { CoursesService } from '@services/courses.service';
+import { CoursesService } from '@services/course/courses.service';
 import { Course } from '@models/course';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
@@ -13,9 +13,9 @@ describe('CourseService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [],
-    providers: [CoursesService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-});
+      imports: [],
+      providers: [CoursesService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
+    });
 
     httpTestingController = TestBed.inject(HttpTestingController);
     service = TestBed.inject(CoursesService);

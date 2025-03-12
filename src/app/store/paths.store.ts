@@ -6,7 +6,7 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { concatMap, pipe, switchMap } from 'rxjs';
 
 import { Path } from '@models/paths';
-import { PathsService } from '@shared/services/paths.service';
+import { PathsService } from '@services/path/paths.service';
 
 export interface State {
   paths: Path[];
@@ -26,18 +26,6 @@ export const PathsStore = signalStore(
   withMethods((store) => {
     const pathsService = inject(PathsService);
     return {
-      deletePath: rxMethod<{ id: number }>(
-        pipe(
-          concatMap(({ id }) => {
-            return pathsService.delete(id).pipe(
-              tapResponse({
-                next: () => {},
-                error: (error: string) => patchState(store, { error }),
-              })
-            );
-          })
-        )
-      ),
       getPath: rxMethod<number>(
         pipe(
           switchMap((id) => {
@@ -68,6 +56,18 @@ export const PathsStore = signalStore(
   withMethods((store) => {
     const pathsService = inject(PathsService);
     return {
+      deletePath: rxMethod<number>(
+        pipe(
+          concatMap((id) => {
+            return pathsService.delete(id).pipe(
+              tapResponse({
+                next: () => store.loadPaths(),
+                error: (error: string) => patchState(store, { error }),
+              })
+            );
+          })
+        )
+      ),
       savePath: rxMethod<{ path: Path }>(
         pipe(
           concatMap(({ path }) => {
